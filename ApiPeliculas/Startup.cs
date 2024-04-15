@@ -1,4 +1,6 @@
-﻿namespace ApiPeliculas
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace ApiPeliculas
 {
     public class Startup
     {
@@ -12,6 +14,9 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationDbContext>(opciones => 
+                opciones.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")) // Configuramos el servicio de EF
+            );
             services.AddControllers();
             services.AddEndpointsApiExplorer();
         }
