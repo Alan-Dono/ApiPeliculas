@@ -5,11 +5,11 @@ namespace ApiPeliculas
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
-        DbSet<Genero> Generos { get; set; }
-       
+        public DbSet<Genero> Generos { get; set; }
     }
 }
+

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiPeliculas
 {
@@ -17,7 +18,11 @@ namespace ApiPeliculas
             services.AddDbContext<ApplicationDbContext>(opciones => 
                 opciones.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")) // Configuramos el servicio de EF
             );
+
+            services.AddAutoMapper(typeof(Startup)); // Indicamos que en este proyecto va a estar las clase la cual va a encapsular las configuraciones de automapper
+
             services.AddControllers();
+
             services.AddEndpointsApiExplorer();
         }
 
