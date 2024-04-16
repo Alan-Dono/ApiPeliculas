@@ -33,7 +33,7 @@ namespace ApiPeliculas.Controllers
             return dtos;
         }
 
-        [HttpGet("id:int", Name = "GetById")]
+        [HttpGet("id:int", Name = "GetGeneroById")]
         public async Task<ActionResult<GeneroDTO>> GetById(int id)
         {
             var genero = await _Context.Generos.FirstOrDefaultAsync(x => x.Id == id);
@@ -52,10 +52,10 @@ namespace ApiPeliculas.Controllers
             _Context.Add(genero);
             await _Context.SaveChangesAsync();
             var generoDTO = _Mapper.Map<GeneroDTO>(genero);
-            return new CreatedAtRouteResult("GetById", new { id = generoDTO.Id }, generoDTO);
+            return new CreatedAtRouteResult("GetGeneroById", new { id = generoDTO.Id }, generoDTO);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromBody] GeneroCreacionDTO generoCreacionDTO)
         {
             var genero = _Mapper.Map<Genero>(generoCreacionDTO);
@@ -65,7 +65,7 @@ namespace ApiPeliculas.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
             var existe = await _Context.Generos.AnyAsync(x => x.Id == id);
