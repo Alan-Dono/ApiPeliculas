@@ -39,17 +39,17 @@ namespace ApiPeliculas.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] ActorCrecionDTO actorCrecionDTO)
+        public async Task<ActionResult> Post([FromForm] ActorCrecionDTO actorCrecionDTO)
         {
             var actor = _Mapper.Map<Actor>(actorCrecionDTO);
             _Context.Add(actor);
-            await _Context.SaveChangesAsync();
+            //await _Context.SaveChangesAsync();
             var actorDto = _Mapper.Map<ActorDTO>(actor);
             return new CreatedAtRouteResult("GetActorById", new { id = actor.Id }, actorDto);
         }
 
         [HttpPut("id:int")]
-        public async Task<ActionResult> Put(int id, [FromBody] ActorCrecionDTO actorCrecionDTO)
+        public async Task<ActionResult> Put(int id, [FromForm] ActorCrecionDTO actorCrecionDTO)
         {
             var actor = _Mapper.Map<Actor>(actorCrecionDTO);
             actor.Id = id;
