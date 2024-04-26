@@ -1,5 +1,6 @@
 ﻿using ApiPeliculas.DTOs;
 using ApiPeliculas.Entities;
+using ApiPeliculas.Helpers;
 using ApiPeliculas.Services;
 using AutoMapper;
 using Azure;
@@ -25,11 +26,13 @@ namespace ApiPeliculas.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ActorDTO>>> Get()
+        public async Task<ActionResult<List<ActorDTO>>> Get([FromQuery] PaginacionDTO paginacionDTO)
         {
-            var actores = await _Context.Actores.ToListAsync();
-            var dtos = _Mapper.Map<List<ActorDTO>>(actores);
-            return dtos;
+            var queryable = _Context.Actores.AsQueryable();
+            await HttpContext.InsertarParametrosPaginacion(queryable, paginacionDTO.CantidadRegistrosPorPagina);
+            var actores = await queryable.Paginar(paginacionDTO).ToListAsync();
+            //var actores = await _Context.Actores.Paginar(paginacionDTO).ToListAsync();
+            return _Mapper.Map<List<ActorDTO>>(actores);
         }
 
 
