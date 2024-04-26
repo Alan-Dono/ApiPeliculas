@@ -24,7 +24,8 @@ namespace ApiPeliculas
 
             services.AddAutoMapper(typeof(Startup)); // Indicamos que en este proyecto va a estar las clase la cual va a encapsular las configuraciones de automapper
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson();
 
             services.AddEndpointsApiExplorer();
         }

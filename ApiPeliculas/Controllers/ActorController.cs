@@ -2,6 +2,8 @@
 using ApiPeliculas.Entities;
 using ApiPeliculas.Services;
 using AutoMapper;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +43,32 @@ namespace ApiPeliculas.Controllers
             }
             return _Mapper.Map<ActorDTO>(actor);
         }
+
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<ActorPatchDTO> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+            var entidadDB = await _Context.Actores.FirstOrDefaultAsync(x => x.Id == id);
+            if (entidadDB == null)
+            {
+                return NotFound();
+            }
+            var entidadDTO = _Mapper.Map<ActorPatchDTO>(entidadDB);
+            patchDocument.ApplyTo(entidadDTO, ModelState);
+            var esValido = TryValidateModel(entidadDTO);
+            if (!esValido)
+            {
+                return BadRequest(ModelState);
+            }
+            _Mapper.Map(entidadDTO, entidadDB);
+            await _Context.SaveChangesAsync();
+            return NoContent();
+        }
+
 
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] ActorCrecionDTO actorCrecionDTO)
