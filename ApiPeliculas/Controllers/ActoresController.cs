@@ -12,13 +12,13 @@ namespace ApiPeliculas.Controllers
 {
     [ApiController]
     [Route("api/actores")]
-    public class ActorController : ControllerBase 
+    public class ActoresController : ControllerBase 
     {
         private readonly ApplicationDbContext _Context;
         private readonly IMapper _Mapper;
         private readonly IAlmacenadorArchivos almacenadorArchivos;
         private readonly string contenedor = "actores";
-        public ActorController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos)
+        public ActoresController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos)
         {
             _Context = context;
             _Mapper = mapper;

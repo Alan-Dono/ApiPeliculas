@@ -8,7 +8,7 @@ namespace ApiPeliculas.Controllers
 {
     [ApiController]
     [Route("api/generos")]
-    public class GeneroControllers : ControllerBase
+    public class GenerosControllers : ControllerBase
     {
         #region Properties
         private readonly ApplicationDbContext _Context;
@@ -16,7 +16,7 @@ namespace ApiPeliculas.Controllers
         #endregion
 
         #region Builder
-        public GeneroControllers(ApplicationDbContext context, IMapper mapper)
+        public GenerosControllers(ApplicationDbContext context, IMapper mapper)
         {
             _Context = context;
             _Mapper = mapper;
