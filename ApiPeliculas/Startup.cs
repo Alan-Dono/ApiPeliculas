@@ -20,7 +20,9 @@ namespace ApiPeliculas
                 opciones.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")) // Configuramos el servicio de EF
             );
 
-            services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosAzure>(); // servicio para almacenar archivos en azure
+            //services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosAzure>(); // servicio para almacenar archivos en azure
+            services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>(); // No Hay plata dijo milei
+            services.AddHttpContextAccessor();
 
             services.AddAutoMapper(typeof(Startup)); // Indicamos que en este proyecto va a estar las clase la cual va a encapsular las configuraciones de automapper
 
