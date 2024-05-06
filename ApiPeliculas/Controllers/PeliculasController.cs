@@ -50,6 +50,7 @@ namespace ApiPeliculas.Controllers
         {
             var pelicula = mapper.Map<Pelicula>(peliculaCreacionDTO);
 
+          //  return NoContent(); // prueba
             if (peliculaCreacionDTO.Poster != null)
             {
                 using (var memoryString = new MemoryStream()) // Esta memoria existe solo en el bloque using
@@ -67,7 +68,7 @@ namespace ApiPeliculas.Controllers
             return new CreatedAtRouteResult("obtenerPelicula", new { id = pelicula.Id }, peliculaDTO);
         }
 
-     
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromForm] PeliculaCreacionDTO peliculaCreacionDTO)
