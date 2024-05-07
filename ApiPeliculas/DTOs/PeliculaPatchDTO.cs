@@ -4,8 +4,6 @@ namespace ApiPeliculas.DTOs
 {
     public class PeliculaPatchDTO
     {
-        public int Id { get; set; }
-
         [Required]
         [StringLength(300)]
         public string Titulo { get; set; }

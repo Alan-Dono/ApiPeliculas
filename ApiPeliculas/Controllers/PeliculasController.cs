@@ -61,19 +61,20 @@ namespace ApiPeliculas.Controllers
                     pelicula.Poster = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, peliculaCreacionDTO.Poster.ContentType);
                 }
             }
-
+            AsignarOrdenActores(pelicula);
             context.Add(pelicula);
             await context.SaveChangesAsync();
             var peliculaDTO = mapper.Map<PeliculaDTO>(pelicula);
             return new CreatedAtRouteResult("obtenerPelicula", new { id = pelicula.Id }, peliculaDTO);
         }
 
-
-
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromForm] PeliculaCreacionDTO peliculaCreacionDTO)
         {
-            var peliculaDB = await context.Peliculas.FirstOrDefaultAsync(x => x.Id == id);
+            var peliculaDB = await context.Peliculas
+                .Include(x => x.PeliculasActores)
+                .Include(x => x.PeliculasGeneros)
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (peliculaDB == null) { return NotFound(); }
             peliculaDB = mapper.Map(peliculaCreacionDTO, peliculaDB);
             if (peliculaCreacionDTO.Poster != null)
@@ -86,6 +87,7 @@ namespace ApiPeliculas.Controllers
                     peliculaDB.Poster = await almacenadorArchivos.EditarArchivo(contenido, extension, contenedor, peliculaCreacionDTO.Poster.ContentType, peliculaDB.Poster);
                 }
             }
+            AsignarOrdenActores(peliculaDB);
             await context.SaveChangesAsync();
             return NoContent();
         }
@@ -127,6 +129,18 @@ namespace ApiPeliculas.Controllers
             await context.SaveChangesAsync();
             return NoContent();
         }
+
+        private void AsignarOrdenActores(Pelicula pelicula)
+        {
+            if (pelicula.PeliculasActores != null)
+            {
+                for (int i = 0; i < pelicula.PeliculasActores.Count; i++)
+                {
+                    pelicula.PeliculasActores[i].Orden = i;
+                }
+            }
+        }
+
 
     }
     
