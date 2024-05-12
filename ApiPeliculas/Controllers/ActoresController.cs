@@ -12,13 +12,13 @@ namespace ApiPeliculas.Controllers
 {
     [ApiController]
     [Route("api/actores")]
-    public class ActoresController : ControllerBase 
+    public class ActoresController : CustomBaseController 
     {
         private readonly ApplicationDbContext _Context;
         private readonly IMapper _Mapper;
         private readonly IAlmacenadorArchivos almacenadorArchivos;
         private readonly string contenedor = "actores";
-        public ActoresController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos)
+        public ActoresController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos):base(context, mapper)
         {
             _Context = context;
             _Mapper = mapper;
@@ -28,56 +28,20 @@ namespace ApiPeliculas.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ActorDTO>>> Get([FromQuery] PaginacionDTO paginacionDTO)
         {
-            var queryable = _Context.Actores.AsQueryable();
-            await HttpContext.InsertarParametrosPaginacion(queryable, paginacionDTO.CantidadRegistrosPorPagina);
-            var actores = await queryable.Paginar(paginacionDTO).ToListAsync();
-            //var actores = await _Context.Actores.Paginar(paginacionDTO).ToListAsync();
-            return _Mapper.Map<List<ActorDTO>>(actores);
+            return await Get<Actor, ActorDTO>(paginacionDTO);
         }
 
 
         [HttpGet("{id:int}", Name = "GetActorById")]
         public async Task<ActionResult<ActorDTO>> Get(int id)
         {
-            var actor = await _Context.Actores.FirstOrDefaultAsync(x => x.Id == id);
-            if (actor == null)
-            {
-                return NotFound();
-            }
-            return _Mapper.Map<ActorDTO>(actor);
+            return await Get<Actor, ActorDTO>(id);
         }
-
-
-        [HttpPatch("{id}")]
-        public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<ActorPatchDTO> patchDocument)
-        {
-            if (patchDocument == null)
-            {
-                return BadRequest();
-            }
-            var entidadDB = await _Context.Actores.FirstOrDefaultAsync(x => x.Id == id);
-            if (entidadDB == null)
-            {
-                return NotFound();
-            }
-            var entidadDTO = _Mapper.Map<ActorPatchDTO>(entidadDB);
-            patchDocument.ApplyTo(entidadDTO, ModelState);
-            var esValido = TryValidateModel(entidadDTO);
-            if (!esValido)
-            {
-                return BadRequest(ModelState);
-            }
-            _Mapper.Map(entidadDTO, entidadDB);
-            await _Context.SaveChangesAsync();
-            return NoContent();
-        }
-
 
         [HttpPost]
         public async Task<ActionResult> Post([FromForm] ActorCrecionDTO actorCrecionDTO)
         {
             var actor = _Mapper.Map<Actor>(actorCrecionDTO);
-
             if(actorCrecionDTO.Foto != null)
             {
                 using(var memoryString = new MemoryStream()) // Esta memoria existe solo en el bloque using
@@ -88,7 +52,6 @@ namespace ApiPeliculas.Controllers
                     actor.Foto = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, actorCrecionDTO.Foto.ContentType);
                 }
             }
-
             _Context.Add(actor);
             await _Context.SaveChangesAsync();
             var actorDto = _Mapper.Map<ActorDTO>(actor);
@@ -118,17 +81,16 @@ namespace ApiPeliculas.Controllers
             return NoContent();
         }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> Patch(int id, [FromBody] JsonPatchDocument<ActorPatchDTO> patchDocument)
+        {
+            return await Patch<Actor, ActorPatchDTO>(id, patchDocument);
+        }
+
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var existe = await _Context.Actores.AnyAsync(x => x.Id == id);
-            if (!existe)
-            {
-                return NotFound();
-            }
-            _Context.Remove(new Actor() { Id = id });
-            await _Context.SaveChangesAsync();
-            return NoContent();
+            return await Delete<Actor>(id);
         }
     }
 }
