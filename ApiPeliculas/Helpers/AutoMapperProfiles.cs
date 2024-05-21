@@ -1,15 +1,19 @@
 ﻿using ApiPeliculas.DTOs;
 using ApiPeliculas.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using NetTopologySuite.Geometries;
 
 namespace ApiPeliculas.Helpers
 {
     public class AutoMapperProfiles: Profile
     {
-        public AutoMapperProfiles()
+        public AutoMapperProfiles(GeometryFactory geometryFactory)
         {
             CreateMap<Genero, GeneroDTO>().ReverseMap(); // Desde/Hacia y reversa
             CreateMap<GeneroCreacionDTO, Genero>();
+
+            CreateMap<IdentityUser, UsuarioDTO>();
 
             CreateMap<Actor, ActorDTO>().ReverseMap();
             CreateMap<ActorCrecionDTO, Actor>()
@@ -26,8 +30,19 @@ namespace ApiPeliculas.Helpers
                 .ForMember(x => x.Generos, options => options.MapFrom(MapPeliculasGeneros))
                 .ForMember(x => x.Actores, options => options.MapFrom(MapPeliculasActores));
 
-            CreateMap<SalaDeCine, SalaDeCineDTO>().ReverseMap(); 
-            CreateMap<SalaDeCineCreacionDTO, SalaDeCine>();
+            CreateMap<SalaDeCine, SalaDeCineDTO>()
+                .ForMember(x => x.Latitud, x => x.MapFrom(y => y.Ubicacion.Y))
+                .ForMember(x => x.Longitud , x => x.MapFrom(y => y.Ubicacion.X));
+
+
+            CreateMap<SalaDeCineDTO, SalaDeCine>()
+                .ForMember(x => x.Ubicacion, x => x.MapFrom(
+                    y => geometryFactory.CreatePoint(new Coordinate(y.Longitud, y.Latitud))));
+
+            CreateMap<SalaDeCineCreacionDTO, SalaDeCine>()
+                .ForMember(x => x.Ubicacion, x => x.MapFrom(
+                    y => geometryFactory.CreatePoint(new Coordinate(y.Longitud, y.Latitud))));
+
 
         }
 
