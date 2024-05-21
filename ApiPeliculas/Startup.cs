@@ -57,6 +57,8 @@ namespace ApiPeliculas
 
             services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326)); //Libreria para trabajar con ubicaciones y coordenadas
 
+            services.AddScoped<PeliculaExisteAttribute>();
+
             services.AddSingleton(provider =>
                 new MapperConfiguration(config =>
                 {

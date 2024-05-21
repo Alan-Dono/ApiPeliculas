@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using System.Runtime.ConstrainedExecution;
 
 namespace ApiPeliculas.Controllers
 {
@@ -21,8 +22,8 @@ namespace ApiPeliculas.Controllers
         private readonly string contenedor = "peliculas";
 
         public PeliculasController(ApplicationDbContext context,
-            IMapper mapper,
-            IAlmacenadorArchivos almacenadorArchivos, ILogger logger):base(context, mapper)
+        IMapper mapper,
+            IAlmacenadorArchivos almacenadorArchivos, ILogger<PeliculasController> logger) :base(context, mapper)
         {
             this.context = context;
             this.mapper = mapper;

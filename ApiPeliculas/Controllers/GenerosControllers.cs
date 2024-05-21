@@ -19,7 +19,7 @@ namespace ApiPeliculas.Controllers
         #region Builder
         public GenerosControllers(ApplicationDbContext context, IMapper mapper):base(context,mapper)
         {
-           // _Context = context;
+           // _Context = DbContext;
            //_Mapper = mapper;
         }
 
