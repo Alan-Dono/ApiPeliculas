@@ -2,6 +2,8 @@
 using ApiPeliculas.DTOs;
 using ApiPeliculas.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,6 +53,7 @@ namespace ApiPeliculas.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles ="Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             return await Delete<Genero>(id);
